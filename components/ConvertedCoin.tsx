@@ -83,7 +83,6 @@ function ConvertedCoin({
 
 export default memo(ConvertedCoin);
 
-// TODO: Make the input only be able to put numbers and a dot
 const styles = StyleSheet.create({
   outerContainer: {
     flexDirection: "row",
