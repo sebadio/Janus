@@ -69,7 +69,6 @@ export default function Converter() {
   }) => (
     <ConvertedCoin
       changeValue={aguacate}
-      onFocus={() => handleInputFocus(index)}
       convertingFrom={{
         currency: "USD",
         id: "1",
@@ -81,26 +80,17 @@ export default function Converter() {
     />
   );
 
-  const handleInputFocus = (index: number) => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index,
-        animated: true,
-        viewOffset: 100,
-      });
-    }
-  };
-
   return (
     <View style={styles.container}>
       <Text>{didFetch ? "Yes" : "No"}</Text>
 
       <FlatList
+        removeClippedSubviews={false}
         data={coins}
         ref={flatListRef}
         keyExtractor={({ id }) => id}
         renderItem={renderItem}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
         getItemLayout={(data, index) => ({
           length: 95, // Approximate height of each item

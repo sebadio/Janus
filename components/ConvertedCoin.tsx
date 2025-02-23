@@ -1,4 +1,4 @@
-import { CountryCurrencyRate } from "@/app/converter";
+import { CountryCurrencyRate } from "@/components/converter";
 import {
   StyleSheet,
   Text,
@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
-import { memo } from "react";
+import { memo, useRef } from "react";
 
 type ConvertedCoinParams = {
   convertingFrom: CountryCurrencyRate;
@@ -17,55 +17,56 @@ type ConvertedCoinParams = {
     sourceCurrency: CountryCurrencyRate,
     targetCurrency: CountryCurrencyRate
   ) => void;
-  onFocus: () => void;
 };
 
 function ConvertedCoin({
   convertingFrom,
   convertingTo,
   changeValue,
-  onFocus,
 }: ConvertedCoinParams) {
   const { width, fontScale } = useWindowDimensions();
+
+  const textInputRef = useRef<TextInput>(null);
 
   const amount = convertingFrom.rate
     ? new Intl.NumberFormat().format(convertingFrom.rate * convertingTo.rate)
     : "";
+
+  const handleChangeText = (amount: string) => {
+    let sanitized = amount.replace(/[^0-9.]/g, "");
+    sanitized = sanitized.replace(/(?<=\..*)\./g, "");
+
+    textInputRef.current?.setNativeProps({ text: sanitized });
+
+    changeValue(parseFloat(sanitized), convertingTo, convertingTo);
+  };
 
   return (
     <View style={[styles.outerContainer, { width: width }]}>
       <CountryFlag
         isoCode={convertingTo.isoCode}
         size={35 * fontScale}
-        style={{ borderRadius: 5 }}
+        style={styles.countryFlag}
       />
       <View>
         <View style={styles.innerContainer}>
           <TextInput
-            onFocus={() => onFocus()}
+            ref={textInputRef}
             autoComplete="off"
             autoCorrect={false}
             placeholder="0"
             keyboardType="decimal-pad"
             numberOfLines={1}
-            onChangeText={(amount) =>
-              changeValue(
-                parseFloat(amount.replace(/,/g, "")),
-                convertingTo,
-                convertingTo
-              )
-            }
+            onChangeText={(amount) => handleChangeText(amount)}
             style={[styles.textInput, { fontSize: 25 * fontScale }]}
-          >
-            {amount}
-          </TextInput>
+            value={amount.toString()}
+          />
           <Text style={{ fontSize: 25 * fontScale, fontWeight: 600 }}>
             {" "}
             {convertingTo.currency}
           </Text>
         </View>
         <Text
-          data-name
           style={[
             styles.countryName,
             {
@@ -109,4 +110,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
   },
+
+  countryFlag: { borderRadius: 5 },
 });

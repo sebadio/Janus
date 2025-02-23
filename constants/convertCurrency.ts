@@ -1,4 +1,4 @@
-import { CountryCurrencyRate } from "@/app/converter";
+import { CountryCurrencyRate } from "@/components/converter";
 
 function convertCurrency(
   amount: number,

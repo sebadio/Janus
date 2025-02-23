@@ -5,7 +5,7 @@ import {
   useWindowDimensions,
   StatusBar,
 } from "react-native";
-import Converter from "./converter";
+import Converter from "../components/converter";
 import ClearCacheButton from "@/components/ClearCache";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
