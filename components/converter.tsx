@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import ConvertedCoin from "@/components/ConvertedCoin";
 import { getData, storeData } from "@/constants/storage";
 import { Country } from "@/types/Country";
-import convertCurrency from "@/constants/convertCurrency";
 
 export interface CountryCurrencyRate extends Country {
   rate: number;
@@ -51,7 +50,7 @@ export default function Converter() {
     );
   }, []);
 
-  function aguacate(
+  function convert(
     amount: number,
     currencyA: CountryCurrencyRate,
     currencyB: CountryCurrencyRate
@@ -68,7 +67,7 @@ export default function Converter() {
     index: number;
   }) => (
     <ConvertedCoin
-      changeValue={aguacate}
+      changeValue={convert}
       convertingFrom={{
         currency: "USD",
         id: "1",

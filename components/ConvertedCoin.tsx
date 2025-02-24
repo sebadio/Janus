@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  useColorScheme,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -32,6 +33,8 @@ function ConvertedCoin({
     ? new Intl.NumberFormat().format(convertingFrom.rate * convertingTo.rate)
     : "";
 
+  let colorScheme = useColorScheme();
+
   const handleChangeText = (amount: string) => {
     let sanitized = amount.replace(/[^0-9.]/g, "");
     sanitized = sanitized.replace(/(?<=\..*)\./g, "");
@@ -45,7 +48,7 @@ function ConvertedCoin({
     <View style={[styles.outerContainer, { width: width }]}>
       <CountryFlag
         isoCode={convertingTo.isoCode}
-        size={35 * fontScale}
+        size={45 * fontScale}
         style={styles.countryFlag}
       />
       <View>
@@ -55,13 +58,27 @@ function ConvertedCoin({
             autoComplete="off"
             autoCorrect={false}
             placeholder="0"
+            placeholderTextColor={colorScheme == "dark" ? "gray" : "grey"}
             keyboardType="decimal-pad"
             numberOfLines={1}
             onChangeText={(amount) => handleChangeText(amount)}
-            style={[styles.textInput, { fontSize: 25 * fontScale }]}
+            style={[
+              styles.textInput,
+              { fontSize: 25 * fontScale },
+              colorScheme == "dark"
+                ? styles.textDarkMode
+                : styles.textLightMode,
+            ]}
             value={amount.toString()}
           />
-          <Text style={{ fontSize: 25 * fontScale, fontWeight: 600 }}>
+          <Text
+            style={[
+              { fontSize: 25 * fontScale, fontWeight: 600 },
+              colorScheme == "dark"
+                ? styles.textDarkMode
+                : styles.textLightMode,
+            ]}
+          >
             {" "}
             {convertingTo.currency}
           </Text>
@@ -72,6 +89,7 @@ function ConvertedCoin({
             {
               fontSize: 15 * fontScale,
             },
+            colorScheme == "dark" ? styles.textDarkMode : styles.textLightMode,
           ]}
         >
           {convertingTo.name}
@@ -87,7 +105,6 @@ const styles = StyleSheet.create({
   outerContainer: {
     flexDirection: "row",
     flexWrap: "nowrap",
-
     justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
@@ -95,8 +112,14 @@ const styles = StyleSheet.create({
 
   textInput: {
     textAlign: "right",
-
     fontWeight: "600",
+  },
+
+  textLightMode: {
+    color: "black",
+  },
+  textDarkMode: {
+    color: "white",
   },
 
   countryName: {

@@ -3,6 +3,8 @@ import {
   useWindowDimensions,
   View,
   TouchableNativeFeedback,
+  StyleSheet,
+  useColorScheme,
 } from "react-native";
 import CountryFlag from "react-native-country-flag";
 import Checkbox from "expo-checkbox";
@@ -21,52 +23,42 @@ const CoinCardFilter = ({
   onToggle,
 }: CoinCardFilterProps) => {
   const { width } = useWindowDimensions();
+  let colorScheme = useColorScheme();
 
   const { currency, isoCode, name } = country;
 
   return (
-    <TouchableNativeFeedback
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        width: width,
-        maxWidth: width,
-        paddingHorizontal: 15,
-        paddingVertical: 15,
-        // backgroundColor: pressed ? "rgba(0,0,0,0.1)" : "white",
-        transitionDuration: "10000ms",
-        transitionProperty: "background_color",
-      }}
-      onPress={() => onToggle(country.id, country)}
-    >
+    <TouchableNativeFeedback onPress={() => onToggle(country.id, country)}>
       <View
-        style={{
-          padding: 10,
-          width: width,
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "row",
-        }}
+        style={[
+          styles.outerView,
+          colorScheme == "dark" ? styles.outerViewDarkMode : "",
+          {
+            width,
+          },
+        ]}
       >
         <CountryFlag isoCode={isoCode} size={35} style={{ borderRadius: 5 }} />
 
         <View style={{ flexGrow: 1 }}>
-          <View style={{ flexDirection: "row", gap: 5, alignSelf: "flex-end" }}>
+          <View style={styles.innerView}>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={{
-                maxWidth: "50%",
-              }}
+              style={[
+                styles.countryNameText,
+                colorScheme == "dark" ? { color: "white" } : "",
+              ]}
             >
               {name}
             </Text>
-            <Text>, </Text>
-            <Text>{currency}</Text>
-            <Text>, </Text>
-            <Text>{isoCode}</Text>
+
+            <Text style={colorScheme == "dark" ? { color: "white" } : ""}>
+              , {currency}, {isoCode}
+            </Text>
             <Checkbox
-              style={{ marginLeft: 10 }}
+              color={colorScheme == "dark" ? "#2F4F4F" : ""}
+              style={styles.checkbox}
               value={checked}
               onValueChange={() => onToggle(country.id, country)}
             />
@@ -76,5 +68,15 @@ const CoinCardFilter = ({
     </TouchableNativeFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  outerView: { padding: 10, alignItems: "center", flexDirection: "row" },
+  outerViewDarkMode: { backgroundColor: "#1c1c1c" },
+  innerView: { flexDirection: "row", gap: 5, alignSelf: "flex-end" },
+  checkbox: { marginLeft: 10 },
+  countryNameText: {
+    maxWidth: "50%",
+  },
+});
 
 export default memo(CoinCardFilter);

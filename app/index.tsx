@@ -3,15 +3,13 @@ import {
   Text,
   TouchableOpacity,
   useWindowDimensions,
-  StatusBar,
+  StyleSheet,
+  useColorScheme,
 } from "react-native";
 import Converter from "../components/converter";
-import ClearCacheButton from "@/components/ClearCache";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
 import { Foundation } from "@expo/vector-icons";
 
-import { useState } from "react";
 import { Link } from "expo-router";
 import { storeData } from "@/constants/storage";
 
@@ -23,69 +21,58 @@ async function clearCache() {
 // TODO: hacer un whatsapp://send?text?... (deeplink)
 
 export default function Index() {
-  const [amount, setAmount] = useState("");
-
   const { width } = useWindowDimensions();
+  const colorScheme = useColorScheme();
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <StatusBar barStyle={"dark-content"} />
+    <>
+      <View style={[styles.topBar, { width }]}>
+        <View></View>
+        <Text>Last updated: TODO</Text>
 
-        <View
-          style={{
-            width: width,
-            display: "flex",
-            flexDirection: "row",
-            gap: 10,
-            padding: 5,
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
+        <Link
+          style={[
+            styles.goToFilterButton,
+            colorScheme == "dark"
+              ? styles.goToFilterDarkMode
+              : styles.goToFilterLightMode,
+          ]}
+          href="/filter"
+          asChild
+          dismissTo
         >
-          <View></View>
-          <Text>Last updated: TODO</Text>
+          <TouchableOpacity>
+            <Foundation name="filter" size={28} color="black" />
+          </TouchableOpacity>
+        </Link>
+      </View>
 
-          <Link href="/filter" asChild dismissTo>
-            <TouchableOpacity
-              style={{
-                justifyContent: "center",
-                alignItems: "center",
-                padding: 10,
-                backgroundColor: "rgba(0,0,0,0.1)",
-                borderRadius: 100,
-                aspectRatio: 1,
-              }}
-            >
-              <Foundation name="filter" size={28} color="black" />
-            </TouchableOpacity>
-          </Link>
-        </View>
-
-        <Converter />
-
-        <View
-          style={{
-            backgroundColor: "grey",
-            width: width,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingVertical: 10,
-          }}
-        >
-          <ClearCacheButton
-            title="Clear cache"
-            onPress={clearCache}
-            color="#000"
-          />
-        </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+      <Converter />
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  topBar: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    padding: 5,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  goToFilterButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 100,
+    aspectRatio: 1,
+    backgroundColor: "rgba(0,0,0,0.1)",
+  },
+  goToFilterDarkMode: {
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+  goToFilterLightMode: {
+    backgroundColor: "rgba(0,0,0,0.1)",
+  },
+});
