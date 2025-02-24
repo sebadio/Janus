@@ -34,7 +34,6 @@ class CurrencyDatabase {
     return this.allCountries;
   }
 
-  // O(1) lookups
   getCountriesByCurrency(currency: string): Country[] | undefined {
     return this.byCurrency.get(currency)?.countries;
   }
@@ -52,7 +51,6 @@ class CurrencyDatabase {
 
     let matches: Country[] = [];
 
-    // Immediate O(1) currency code matches
     const currencyMatches = this.byCurrency.get(lowercaseQuery.toUpperCase());
     if (currencyMatches) {
       matches = currencyMatches.countries;
@@ -85,5 +83,3 @@ class CurrencyDatabase {
 }
 
 export default CurrencyDatabase;
-
-//FIXME : Search should return a list of countries instead of the names
