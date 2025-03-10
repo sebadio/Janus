@@ -138,6 +138,7 @@ export default function filter() {
         </View>
       ) : (
         <FlatList
+          // Sorting it this way is wrong, // TODO: search for another way
           data={searchedCoins.sort((a, b) => {
             if (selectedCoins.has(a.id) && selectedCoins.has(b.id)) return 0;
             if (selectedCoins.has(a.id)) return -1;

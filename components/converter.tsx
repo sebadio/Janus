@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import ConvertedCoin from "@/components/ConvertedCoin";
 import { getData, storeData } from "@/constants/storage";
@@ -10,21 +10,23 @@ export interface CountryCurrencyRate extends Country {
 
 async function getCoinData() {
   const dataSaved = await getData("coins");
+  const next_update = await getData("next_update");
 
-  if (dataSaved != null) {
+  if (dataSaved != null && new Date() < new Date(next_update)) {
     return [dataSaved, false];
   }
 
   const response = await fetch("https://open.er-api.com/v6/latest/USD");
   const data = await response.json();
 
+  await storeData("last_update", data.time_last_update_utc);
+  await storeData("next_update", data.time_next_update_utc);
   await storeData("coins", data.rates);
   return [data.rates, true];
 }
 
 export default function Converter() {
   const [coins, setCoins] = useState<CountryCurrencyRate[]>([]);
-  const [didFetch, setDidFetch] = useState<boolean>(true);
   const [amountToConvert, setAmountToConvert] = useState<number>(0);
 
   const flatListRef = useRef<FlatList<CountryCurrencyRate>>(null);
@@ -45,7 +47,6 @@ export default function Converter() {
         }
 
         setCoins(coinsArray);
-        setDidFetch(didFetch);
       }
     );
   }, []);
@@ -81,8 +82,6 @@ export default function Converter() {
 
   return (
     <View style={styles.container}>
-      <Text>{didFetch ? "Yes" : "No"}</Text>
-
       <FlatList
         removeClippedSubviews={false}
         data={coins}
@@ -92,7 +91,7 @@ export default function Converter() {
         keyboardShouldPersistTaps="always"
         keyboardDismissMode="on-drag"
         getItemLayout={(data, index) => ({
-          length: 95, // Approximate height of each item
+          length: 95,
           offset: 95 * index,
           index,
         })}

@@ -30,7 +30,9 @@ function ConvertedCoin({
   const textInputRef = useRef<TextInput>(null);
 
   const amount = convertingFrom.rate
-    ? new Intl.NumberFormat().format(convertingFrom.rate * convertingTo.rate)
+    ? new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(
+        convertingFrom.rate * convertingTo.rate
+      )
     : "";
 
   let colorScheme = useColorScheme();
@@ -51,7 +53,7 @@ function ConvertedCoin({
         size={45 * fontScale}
         style={styles.countryFlag}
       />
-      <View>
+      <View style={{ flex: 1 }}>
         <View style={styles.innerContainer}>
           <TextInput
             ref={textInputRef}
@@ -64,7 +66,7 @@ function ConvertedCoin({
             onChangeText={(amount) => handleChangeText(amount)}
             style={[
               styles.textInput,
-              { fontSize: 25 * fontScale },
+              { fontSize: 25 * fontScale, flex: 1 },
               colorScheme == "dark"
                 ? styles.textDarkMode
                 : styles.textLightMode,
@@ -84,6 +86,7 @@ function ConvertedCoin({
           </Text>
         </View>
         <Text
+          onPress={() => console.log(textInputRef.current)}
           style={[
             styles.countryName,
             {
